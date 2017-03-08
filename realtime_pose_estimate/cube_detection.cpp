@@ -69,7 +69,8 @@ int CubeDetection(const std::string& yml_read_path,
     PnPProblem pnp_detection_est(params_WEBCAM);
     
     Model model;               // instantiate Model object
-    model.Load(yml_read_path); // load a 3D textured object model
+    //model.Load(yml_read_path); // load a 3D textured object model
+    model.LoadBinary(yml_read_path);
     
     Mesh mesh;                 // instantiate Mesh object
     mesh.Load(ply_read_path);  // load an object mesh

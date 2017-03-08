@@ -13,14 +13,15 @@
 static std::string img_path = "../../../data/box5.JPG";
 static std::string ply_read_path = "../../../data/box.ply";
 static std::string write_path = "../../../data/box.yml";
+static std::string write_binary_path = "../../../data/box.bin";
 
 static std::string video_read_path = "../../../data/box.mp4";
 static std::string video_write_path = "../../../data/box_output.mp4";
 
 int main(int argc, const char * argv[]) {
     //register the cube
-    //CubeRegister(img_path, ply_read_path, write_path);
+    //CubeRegister(img_path, ply_read_path, write_binary_path);
     //detect the cube
-    CubeDetection(write_path, ply_read_path, video_read_path, video_write_path);
+    CubeDetection(write_binary_path, ply_read_path, video_read_path, video_write_path);
     return 0;
 }

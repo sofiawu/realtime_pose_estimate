@@ -10,7 +10,7 @@
 
 namespace posest {
     
-    Model::Model() : list_points2d_in_(0), list_points2d_out_(0), list_points3d_in_(0), n_correspondences_(0) {}
+    Model::Model() : list_points2d_in_(0), list_points2d_out_(0), list_points3d_in_(0), n_correspondences_(0), model_type_(0) {}
     
     Model::~Model() {
         // TODO Auto-generated destructor stub
@@ -36,7 +36,7 @@ namespace posest {
     
     
     /** Save a CSV file and fill the object mesh */
-    void Model::Save(const std::string path) {
+    void Model::Save(const std::string& path) {
         cv::Mat points3dmatrix = cv::Mat(list_points3d_in_);
         cv::Mat points2dmatrix = cv::Mat(list_points2d_in_);
         
@@ -49,8 +49,34 @@ namespace posest {
         storage.release();
     }
     
+    bool Model::SaveBinary(const std::string& path) {
+        FILE* fp = fopen(path.c_str(), "wb");
+        
+        fwrite(&model_type_, sizeof(int), 1, fp);
+        
+        //save 3d points
+        int num_points = (int)list_points3d_in_.size();
+        fwrite(&num_points, sizeof(int), 1, fp);
+        for(auto point : list_points3d_in_) {
+            fwrite(&point.x, sizeof(float), 1, fp);
+            fwrite(&point.y, sizeof(float), 1, fp);
+            fwrite(&point.z, sizeof(float), 1, fp);
+        }
+        //save descriptors
+        int rows = (int)descriptors_.rows;
+        int cols = (int)descriptors_.cols;
+        int type = (int)descriptors_.type();
+        fwrite(&rows, sizeof(int), 1, fp);
+        fwrite(&cols, sizeof(int), 1, fp);
+        fwrite(&type, sizeof(int), 1, fp);
+        
+        fwrite(descriptors_.data, sizeof(char), descriptors_.step * rows, fp);
+        fclose(fp);
+        return true;
+    }
+    
     /** Load a YAML file using OpenCv functions **/
-    void Model::Load(const std::string path) {
+    void Model::Load(const std::string& path) {
         cv::Mat points3d_mat;
         
         cv::FileStorage storage(path, cv::FileStorage::READ);
@@ -60,6 +86,38 @@ namespace posest {
         points3d_mat.copyTo(list_points3d_in_);
         
         storage.release();
+    }
+    
+    bool Model::LoadBinary(const std::string &path) {
+        FILE* fp = fopen(path.c_str(), "rb");
+        if(fp == nullptr) {
+            printf("%s is not exist.", path.c_str());
+            return false;
+        }
+        
+        fread(&model_type_, sizeof(int), 1, fp);
+        
+        //load points
+        int num_points;
+        fread(&num_points, sizeof(int), 1, fp);
+        list_points3d_in_.resize(num_points);
+        for(int i = 0; i < num_points; ++i) {
+            fread(&list_points3d_in_[i].x, sizeof(float), 1, fp);
+            fread(&list_points3d_in_[i].y, sizeof(float), 1, fp);
+            fread(&list_points3d_in_[i].z, sizeof(float), 1, fp);
+        }
+        //load descriptors
+        int rows, cols, type;
+        fread(&rows, sizeof(int), 1, fp);
+        fread(&cols, sizeof(int), 1, fp);
+        fread(&type, sizeof(int), 1, fp);
+        
+        descriptors_ = cv::Mat(rows, cols, type);
+        fread(descriptors_.data, sizeof(char), descriptors_.step * rows, fp);
+        
+        fclose(fp);
+        
+        return true;
     }
     
     void Model::Merge(const std::string& path) {

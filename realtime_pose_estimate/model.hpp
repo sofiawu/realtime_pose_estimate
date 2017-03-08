@@ -26,14 +26,18 @@ namespace posest {
         inline std::vector<cv::KeyPoint> GetKeypoints() const { return list_keypoints_; }
         inline cv::Mat GetDescriptors() const { return descriptors_; }
         inline int GetNumDescriptors() const { return descriptors_.rows; }
+        inline int GetModelType() const { return model_type_;}
+        inline void SetModelType(int type) { model_type_ = type; }
         
         void AddCorrespondence(const cv::Point2f &point2d, const cv::Point3f &point3d);
         void AddOutlier(const cv::Point2f &point2d);
         void AddDescriptor(const cv::Mat &descriptor);
         void AddKeypoint(const cv::KeyPoint &kp);
         
-        void Save(const std::string path);
-        void Load(const std::string path);
+        void Save(const std::string& path);
+        bool SaveBinary(const std::string& path);
+        void Load(const std::string& path);
+        bool LoadBinary(const std::string& path);
         void Merge(const std::string& path);
         void MergeSave(const std::string& path);
         
@@ -50,6 +54,8 @@ namespace posest {
         std::vector<cv::Point3f> list_points3d_in_;
         /** The list of 2D points descriptors */
         cv::Mat descriptors_;
+        
+        int model_type_; // (0 : 2d image; 1: cube ; 2: cylinder; 3: general 3d)
     };
 }
 
