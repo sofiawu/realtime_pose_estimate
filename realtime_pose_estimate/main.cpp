@@ -33,7 +33,7 @@ int main(int argc, const char * argv[]) {
     //detect the cube
     //CubeDetection(write_binary_path, ply_read_path, video_read_path, video_write_path);
     
-    //CylinderRegister(cylinder_img_path, cylinder_write_binary_path);
+    CylinderRegister(cylinder_img_path, cylinder_write_binary_path);
     CylinderDetection(cylinder_write_binary_path, cylinder_video_read_path, cylinder_video_write_path);
     
     return 0;

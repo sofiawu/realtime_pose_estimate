@@ -187,6 +187,7 @@ int CubeRegister(const std::string& img_path,
     // save the model into a *.yaml file
     //model.Save(write_path);
     model.SetModelType(1);
+    model.SetModelParam(9.0, 7.8, 15.0);
     model.SaveBinary(write_path);
     
     // Out image

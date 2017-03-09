@@ -54,6 +54,16 @@ namespace posest {
         
         fwrite(&model_type_, sizeof(int), 1, fp);
         
+        if(model_type_ == 1) {
+            fwrite(&model_param_.cuboid.width, sizeof(float), 1, fp);
+            fwrite(&model_param_.cuboid.height, sizeof(float), 1, fp);
+            fwrite(&model_param_.cuboid.length, sizeof(float), 1, fp);
+        } else if(model_type_ == 2) {
+            fwrite(&model_param_.cylinder.bottom_diameter, sizeof(float), 1, fp);
+            fwrite(&model_param_.cylinder.top_diameter, sizeof(float), 1, fp);
+            fwrite(&model_param_.cylinder.side_length, sizeof(float), 1, fp);
+        }
+        
         //save 3d points
         int num_points = (int)list_points3d_in_.size();
         fwrite(&num_points, sizeof(int), 1, fp);
@@ -96,6 +106,16 @@ namespace posest {
         }
         
         fread(&model_type_, sizeof(int), 1, fp);
+        
+        if(model_type_ == 1) {
+            fread(&model_param_.cuboid.width, sizeof(float), 1, fp);
+            fread(&model_param_.cuboid.height, sizeof(float), 1, fp);
+            fread(&model_param_.cuboid.length, sizeof(float), 1, fp);
+        } else if(model_type_ == 2) {
+            fread(&model_param_.cylinder.bottom_diameter, sizeof(float), 1, fp);
+            fread(&model_param_.cylinder.top_diameter, sizeof(float), 1, fp);
+            fread(&model_param_.cylinder.side_length, sizeof(float), 1, fp);
+        }
         
         //load points
         int num_points;

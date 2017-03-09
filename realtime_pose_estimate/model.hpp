@@ -15,6 +15,19 @@
 
 namespace posest {
     
+    union ModelParam {
+        struct {
+            float length;
+            float width;
+            float height;
+        } cuboid;
+        struct {
+            float bottom_diameter;
+            float top_diameter;
+            float side_length;
+        } cylinder;
+    };
+    
     class Model {
     public:
         Model();
@@ -28,6 +41,19 @@ namespace posest {
         inline int GetNumDescriptors() const { return descriptors_.rows; }
         inline int GetModelType() const { return model_type_;}
         inline void SetModelType(int type) { model_type_ = type; }
+        
+        inline void SetModelParam(float a, float b, float c) {
+            if(model_type_ == 1) {
+                model_param_.cuboid.width = a;
+                model_param_.cuboid.height = b;
+                model_param_.cuboid.length = c;
+            } else if(model_type_ == 2) {
+                model_param_.cylinder.bottom_diameter = a;
+                model_param_.cylinder.top_diameter = b;
+                model_param_.cylinder.side_length = c;
+            }
+        }
+        inline ModelParam GetModelParam() const { return model_param_; }
         
         void AddCorrespondence(const cv::Point2f &point2d, const cv::Point3f &point3d);
         void AddOutlier(const cv::Point2f &point2d);
@@ -56,6 +82,7 @@ namespace posest {
         cv::Mat descriptors_;
         
         int model_type_; // (0 : 2d image; 1: cube ; 2: cylinder; 3: general 3d)
+        ModelParam model_param_;
     };
 }
 

@@ -61,6 +61,7 @@ int CylinderRegister(const std::string& side_file,
         model.AddKeypoint(keypoints[i]);
     }
     model.SetModelType(2);
+    model.SetModelParam(448.8, 448.8, 404);
     //model.Save(write_path);
     model.SaveBinary(write_path);
     return 0;
