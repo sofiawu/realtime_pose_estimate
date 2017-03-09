@@ -64,6 +64,27 @@ namespace posest {
         R_matrix_ = cv::Mat::zeros(3, 3, CV_64FC1);   // rotation matrix
         t_matrix_ = cv::Mat::zeros(3, 1, CV_64FC1);   // translation matrix
         P_matrix_ = cv::Mat::zeros(3, 4, CV_64FC1);   // rotation-translation matrix
+        
+        dist_coeffs_ = cv::Mat::zeros(4, 1, CV_64FC1);
+    }
+    
+    PnPProblem::PnPProblem(const double params[], const double dist_coeffs[]) {
+        A_matrix_ = cv::Mat::zeros(3, 3, CV_64FC1);   // intrinsic camera parameters
+        A_matrix_.at<double>(0, 0) = params[0];       //      [ fx   0  cx ]
+        A_matrix_.at<double>(1, 1) = params[1];       //      [  0  fy  cy ]
+        A_matrix_.at<double>(0, 2) = params[2];       //      [  0   0   1 ]
+        A_matrix_.at<double>(1, 2) = params[3];
+        A_matrix_.at<double>(2, 2) = 1;
+        
+        R_matrix_ = cv::Mat::zeros(3, 3, CV_64FC1);   // rotation matrix
+        t_matrix_ = cv::Mat::zeros(3, 1, CV_64FC1);   // translation matrix
+        P_matrix_ = cv::Mat::zeros(3, 4, CV_64FC1);   // rotation-translation matrix
+        
+        dist_coeffs_ = cv::Mat::zeros(4, 1, CV_64FC1);
+        dist_coeffs_.at<double>(0, 0) = dist_coeffs[0];
+        dist_coeffs_.at<double>(1, 0) = dist_coeffs[1];
+        dist_coeffs_.at<double>(2, 0) = dist_coeffs[2];
+        dist_coeffs_.at<double>(3, 0) = dist_coeffs[3];
     }
     
     PnPProblem::~PnPProblem() {}
@@ -88,14 +109,14 @@ namespace posest {
     bool PnPProblem::EstimatePose( const std::vector<cv::Point3f> &list_points3d,
                                   const std::vector<cv::Point2f> &list_points2d,
                                   int flags) {
-        cv::Mat dist_coeffs = cv::Mat::zeros(4, 1, CV_64FC1);
+        //cv::Mat dist_coeffs = cv::Mat::zeros(4, 1, CV_64FC1);
         cv::Mat rvec = cv::Mat::zeros(3, 1, CV_64FC1);
         cv::Mat tvec = cv::Mat::zeros(3, 1, CV_64FC1);
         
         bool use_extrinsic_guess = false;
         
         // Pose estimation
-        bool correspondence = cv::solvePnP( list_points3d, list_points2d, A_matrix_, dist_coeffs, rvec, tvec,
+        bool correspondence = cv::solvePnP( list_points3d, list_points2d, A_matrix_, dist_coeffs_, rvec, tvec,
                                            use_extrinsic_guess, flags);
         
         // Transforms Rotation Vector to Matrix

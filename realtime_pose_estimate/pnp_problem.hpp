@@ -18,6 +18,7 @@ namespace posest {
     class PnPProblem {
     public:
         explicit PnPProblem(const double param[]);  // custom constructor
+        explicit PnPProblem(const double param[], const double dist_coeff[]);
         virtual ~PnPProblem();
         
         bool Backproject2DPoint(const Mesh *mesh, const cv::Point2f &point2d, cv::Point3f &point3d);
@@ -35,6 +36,7 @@ namespace posest {
         inline cv::Mat Get_R_matrix() const { return R_matrix_; }
         inline cv::Mat Get_t_matrix() const { return t_matrix_; }
         inline cv::Mat Get_P_matrix() const { return P_matrix_; }
+        inline cv::Mat GetDistCoeffMatrix() const { return dist_coeffs_; }
         
         void Set_P_matrix( const cv::Mat &R_matrix, const cv::Mat &t_matrix);
         
@@ -53,6 +55,8 @@ namespace posest {
         cv::Mat t_matrix_;
         /** The computed projection matrix */
         cv::Mat P_matrix_;
+        
+        cv::Mat dist_coeffs_;
     };
 
 }
